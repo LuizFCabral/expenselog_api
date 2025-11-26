@@ -49,9 +49,9 @@ asyncio_default_fixture_loop_scope = 'function'
 lint='ruff check'
 pre_format='ruff check --fix'
 format='ruff format'
-run='fastapi dev fastapi_proj/app.py'
+run='fastapi dev expenselog_api/app.py'
 pre_test='task lint'
-test='pytest -s -x --cov=fastapi_proj -vv'
+test='pytest -s -x --cov=expenselog_api -vv'
 post_test='coverage html'
 
 [tool.coverage.run]
