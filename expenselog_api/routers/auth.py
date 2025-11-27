@@ -1,11 +1,6 @@
 from http import HTTPStatus
 from typing import Annotated
 
-from expenselog_api.security import (
-    create_access_token,
-    get_current_user,
-    verify_password,
-)
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
@@ -14,6 +9,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from expenselog_api.database import get_session
 from expenselog_api.models import User
 from expenselog_api.schemas.schemas import Token
+from expenselog_api.security import (
+    create_access_token,
+    get_current_user,
+    verify_password,
+)
 
 router = APIRouter(prefix='/auth', tags=['auth'])
 Session = Annotated[AsyncSession, Depends(get_session)]

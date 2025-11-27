@@ -1,10 +1,6 @@
 from http import HTTPStatus
 from typing import Annotated
 
-from expenselog_api.security import (
-    get_current_user,
-    get_password_hash,
-)
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
@@ -18,6 +14,10 @@ from expenselog_api.schemas.schemas import (
     UserPublic,
     UserSchema,
     UsersList,
+)
+from expenselog_api.security import (
+    get_current_user,
+    get_password_hash,
 )
 
 router = APIRouter(prefix='/users', tags=['users'])
