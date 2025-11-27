@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from expenselog_api.database import get_session
 from expenselog_api.models import User
+from expenselog_api.routers.accounts import create_account
 from expenselog_api.schemas.schemas import (
     FilterPage,
     Message,
@@ -50,9 +51,13 @@ async def register_user(user: UserSchema, session: Session):  # type: ignore
         email=user.email,
         password=get_password_hash(user.password),
     )
+
     session.add(db_user)
+
     await session.commit()
     await session.refresh(db_user)
+
+    await create_account(db_user.id, session)
 
     return db_user
 

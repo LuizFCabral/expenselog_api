@@ -11,7 +11,7 @@ from testcontainers.postgres import PostgresContainer
 
 from expenselog_api.app import app
 from expenselog_api.database import get_session
-from expenselog_api.models import User, table_registry
+from expenselog_api.models import Account, User, table_registry
 from expenselog_api.security import get_password_hash
 from expenselog_api.setting import Settings
 
@@ -94,6 +94,17 @@ async def other_user(session: AsyncSession):
     return user
 
 
+@pytest_asyncio.fixture
+async def account(user, session: AsyncSession):
+    account = AccountFactory(user_id=user.id)
+
+    session.add(account)
+    await session.commit()
+    await session.refresh(account)
+
+    return account
+
+
 @pytest.fixture
 def token(client, user):
     response = client.post(
@@ -116,3 +127,13 @@ class UserFactory(factory.Factory):
     username = factory.Sequence(lambda n: f'test{n}')
     email = factory.LazyAttribute(lambda obj: f'{obj.username}@test.com')
     password = factory.LazyAttribute(lambda obj: f'{obj.username}&#12345')
+
+
+class AccountFactory(factory.Factory):
+    class Meta:
+        model = Account
+
+    user_id = factory.Sequence(lambda n: n)
+    balance = 0.0
+    total_income = 0.0
+    total_expenses = 0.0
