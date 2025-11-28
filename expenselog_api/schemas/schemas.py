@@ -35,6 +35,6 @@ class FilterPage(BaseModel):
 class AccountSchema(BaseModel):
     id: int
     user_id: int
-    balance: float = Field(ge=0.0, default=0.0)
-    total_income: float = Field(ge=0.0, default=0.0)
-    total_expenses: float = Field(ge=0.0, default=0.0)
+    balance: float = Field(default=0.0)
+    total_income: float = Field(default=0.0)
+    total_expenses: float = Field(default=0.0)

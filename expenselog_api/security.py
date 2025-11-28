@@ -10,7 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from expenselog_api.database import get_session
-from expenselog_api.models import User
+from expenselog_api.models import Account, User
 from expenselog_api.setting import Settings
 
 pwd_content = PasswordHash.recommended()
@@ -73,3 +73,19 @@ async def get_current_user(
         raise credentials_exception
 
     return user
+
+
+async def get_current_account(
+    user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+):
+    account = await session.scalar(
+        select(Account).where(Account.user_id == user.id)
+    )
+
+    if not account:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='Account not found'
+        )
+
+    return account

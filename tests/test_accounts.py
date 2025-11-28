@@ -37,7 +37,7 @@ async def test_create_account(client, session: AsyncSession, mock_db_time):
 
 def test_get_account(client, account, token):
     response = client.get(
-        f'/accounts/{account.user_id}',
+        '/accounts/',
         headers={'Authorization': f'Bearer {token}'},
     )
 
@@ -51,13 +51,29 @@ def test_get_account(client, account, token):
     }
 
 
-def test_get_account_without_permission(client, other_user, token):
-    response = client.get(
-        f'/accounts/{other_user.id}',
+def test_increase_balance(client, account, token):
+    response = client.put(
+        '/accounts/increase_balance',
         headers={'Authorization': f'Bearer {token}'},
+        params={'amount': 150.0},
     )
 
-    assert response.status_code == HTTPStatus.FORBIDDEN
+    assert response.status_code == HTTPStatus.OK
     assert response.json() == {
-        'detail': 'Not authorized to access this account'
+        'user_id': account.user_id,
+        'balance': 150.0,
+        'total_income': 0.0,
+        'total_expenses': 0.0,
+        'id': account.id,
     }
+
+
+def test_increase_balance_invalid_amount(client, token):
+    response = client.put(
+        '/accounts/increase_balance',
+        headers={'Authorization': f'Bearer {token}'},
+        params={'amount': -50.0},
+    )
+
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.json() == {'detail': 'Amount must be greater than zero'}

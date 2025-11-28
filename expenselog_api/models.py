@@ -37,3 +37,19 @@ class Account:
     updated_at: Mapped[datetime] = mapped_column(
         init=False, server_default=func.now(), onupdate=func.now()
     )
+
+    def increase_balance(self, amount: float):
+        if amount <= 0:
+            return False
+
+        self.balance += amount
+        self.updated_at = func.now()
+        return True
+
+    def decrease_balance(self, amount: float):
+        if amount <= 0:
+            return False
+
+        self.balance -= amount
+        self.updated_at = func.now()
+        return True
