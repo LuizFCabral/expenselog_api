@@ -83,9 +83,4 @@ async def get_current_account(
         select(Account).where(Account.user_id == user.id)
     )
 
-    if not account:
-        raise HTTPException(
-            status_code=HTTPStatus.NOT_FOUND, detail='Account not found'
-        )
-
     return account

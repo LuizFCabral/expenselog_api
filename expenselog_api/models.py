@@ -1,3 +1,4 @@
+import math
 from datetime import datetime
 
 from sqlalchemy import ForeignKey, func
@@ -39,7 +40,7 @@ class Account:
     )
 
     def increase_balance(self, amount: float):
-        if amount <= 0:
+        if math.isnan(amount):
             return False
 
         self.balance += amount
@@ -47,7 +48,7 @@ class Account:
         return True
 
     def decrease_balance(self, amount: float):
-        if amount <= 0:
+        if math.isnan(amount):
             return False
 
         self.balance -= amount

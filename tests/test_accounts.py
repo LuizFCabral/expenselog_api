@@ -68,7 +68,24 @@ def test_increase_balance(client, account, token):
     }
 
 
-def test_increase_balance_invalid_amount(client, token):
+def test_decrease_balance(client, account, token):
+    response = client.put(
+        '/accounts/decrease_balance',
+        headers={'Authorization': f'Bearer {token}'},
+        params={'amount': 150.0},
+    )
+
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'user_id': account.user_id,
+        'balance': -150.0,
+        'total_income': 0.0,
+        'total_expenses': 0.0,
+        'id': account.id,
+    }
+
+
+def test_increase_balance_invalid_amount(client, account, token):
     response = client.put(
         '/accounts/increase_balance',
         headers={'Authorization': f'Bearer {token}'},
@@ -77,3 +94,28 @@ def test_increase_balance_invalid_amount(client, token):
 
     assert response.status_code == HTTPStatus.BAD_REQUEST
     assert response.json() == {'detail': 'Amount must be greater than zero'}
+
+
+def test_decrease_balance_invalid_amount(client, account, token):
+    response = client.put(
+        '/accounts/decrease_balance',
+        headers={'Authorization': f'Bearer {token}'},
+        params={'amount': -50.0},
+    )
+
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.json() == {'detail': 'Amount must be greater than zero'}
+
+
+def test_increase_balance_with_nan_amount():
+    account = Account(user_id=1, balance=100.0)
+
+    result = account.increase_balance(float('NaN'))
+    assert result is False
+
+
+def test_decrease_balance_with_nan_amount():
+    account = Account(user_id=1, balance=100.0)
+
+    result = account.decrease_balance(float('NaN'))
+    assert result is False

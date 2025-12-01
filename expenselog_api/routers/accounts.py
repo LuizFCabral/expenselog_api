@@ -43,13 +43,13 @@ async def increase_balance(
     amount: float, account: CurrentAccount, session: Session
 ):
 
-    success = account.increase_balance(amount)
-
-    if not success:
+    if amount <= 0:
         raise HTTPException(
-            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
-            detail='Failed to increase balance',
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail='Amount must be greater than zero',
         )
+
+    account.increase_balance(amount)
 
     session.add(account)
     await session.commit()
@@ -67,13 +67,7 @@ async def decrease_balance(
             status_code=HTTPStatus.BAD_REQUEST,
             detail='Amount must be greater than zero',
         )
-    success = account.decrease_balance(amount)
-
-    if not success:
-        raise HTTPException(
-            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
-            detail='Failed to decrease balance',
-        )
+    account.decrease_balance(amount)
 
     session.add(account)
     await session.commit()
