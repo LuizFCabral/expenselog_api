@@ -6,8 +6,8 @@ from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from expenselog_api.database import get_session
-from expenselog_api.models import Account, User
-from expenselog_api.schemas.schemas import AccountSchema
+from expenselog_api.models import Account, Transection, User
+from expenselog_api.schemas.schemas import AccountSchema, TransectionList
 from expenselog_api.security import get_current_account, get_current_user
 
 router = APIRouter(prefix='/accounts', tags=['accounts'])
@@ -74,3 +74,17 @@ async def decrease_balance(
     await session.refresh(account)
 
     return account
+
+
+@router.get('/transections', response_model=TransectionList)
+async def list_transections(
+    account: CurrentAccount,
+    session: Session,
+):
+    transections = await session.scalars(
+        Transection.select().where(
+            Account.id == account.id
+        ).order_by(Account.created_at.desc())
+    )
+
+    return {'transections': transections.all()}

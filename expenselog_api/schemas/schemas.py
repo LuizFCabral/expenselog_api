@@ -1,3 +1,4 @@
+import datetime
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
@@ -38,3 +39,16 @@ class AccountSchema(BaseModel):
     balance: float = Field(default=0.0)
     total_income: float = Field(default=0.0)
     total_expenses: float = Field(default=0.0)
+
+class TransectionSchema(BaseModel):
+    id: int
+    account_id: int
+    transection_type: str
+    amount: float = Field(ge=0.0)
+    description: str | None = None
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+class TransectionList(BaseModel):
+    transections: list[TransectionSchema]
