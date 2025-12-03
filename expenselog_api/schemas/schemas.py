@@ -1,5 +1,8 @@
-import datetime
+from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
+from expenselog_api.models import TransectionType
 
 
 class Message(BaseModel):
@@ -40,15 +43,20 @@ class AccountSchema(BaseModel):
     total_income: float = Field(default=0.0)
     total_expenses: float = Field(default=0.0)
 
+
 class TransectionSchema(BaseModel):
-    id: int
-    account_id: int
-    transection_type: str
+    type: TransectionType
     amount: float = Field(ge=0.0)
     description: str | None = None
-    created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class TransectionPublic(TransectionSchema):
+    id: int
+    created_at: datetime
+    account_id: int
+
 
 class TransectionList(BaseModel):
     transections: list[TransectionSchema]

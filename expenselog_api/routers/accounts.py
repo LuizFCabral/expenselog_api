@@ -82,9 +82,9 @@ async def list_transections(
     session: Session,
 ):
     transections = await session.scalars(
-        Transection.select().where(
-            Account.id == account.id
-        ).order_by(Account.created_at.desc())
+        Transection.select()
+        .where(Account.id == account.id)
+        .order_by(Account.created_at.desc())
     )
 
     return {'transections': transections.all()}

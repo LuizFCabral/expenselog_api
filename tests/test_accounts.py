@@ -30,6 +30,7 @@ async def test_create_account(client, session: AsyncSession, mock_db_time):
         'total_income': 0.0,
         'total_expenses': 0.0,
         'id': 1,
+        'transections': [],
         'created_at': time,
         'updated_at': time,
     }
