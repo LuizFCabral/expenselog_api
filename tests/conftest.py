@@ -11,7 +11,7 @@ from testcontainers.postgres import PostgresContainer
 
 from expenselog_api.app import app
 from expenselog_api.database import get_session
-from expenselog_api.models import Account, User, table_registry
+from expenselog_api.models import Account, Transection, User, table_registry
 from expenselog_api.security import get_password_hash
 from expenselog_api.setting import Settings
 
@@ -105,6 +105,17 @@ async def account(user, session: AsyncSession):
     return account
 
 
+@pytest_asyncio.fixture
+async def transection(account, session: AsyncSession):
+    transection = TransectionFactory(account_id=account.id)
+
+    session.add(transection)
+    await session.commit()
+    await session.refresh(transection)
+
+    return transection
+
+
 @pytest.fixture
 def token(client, user):
     response = client.post(
@@ -137,3 +148,15 @@ class AccountFactory(factory.Factory):
     balance = 0.0
     total_income = 0.0
     total_expenses = 0.0
+
+
+class TransectionFactory(factory.Factory):
+    class Meta:
+        model = Transection
+
+    account_id = factory.Sequence(lambda n: n)
+    type = 'income'
+    amount = 100.0
+    description = 'Test transection'
+    balance_before = 0.0
+    balance_after = 100.0

@@ -56,6 +56,8 @@ class TransectionPublic(TransectionSchema):
     id: int
     created_at: datetime
     account_id: int
+    balance_before: float
+    balance_after: float
 
 
 class TransectionList(BaseModel):

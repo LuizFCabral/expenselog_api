@@ -5,7 +5,7 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from expenselog_api.models import Account
+from expenselog_api.models import Account, Transection
 
 
 @pytest.mark.asyncio
@@ -120,3 +120,31 @@ def test_decrease_balance_with_nan_amount():
 
     result = account.decrease_balance(float('NaN'))
     assert result is False
+
+
+@pytest.mark.asyncio
+async def test_select_transections(
+    client, session: AsyncSession, token, mock_db_time
+):
+    with mock_db_time(model=Transection) as time:
+        response = client.get(
+            '/accounts/transections',
+            headers={'Authorization': f'Bearer {token}'},
+        )
+
+    print(time)
+    assert response.status_code == HTTPStatus.OK
+    assert response.json() == {
+        'transections': [
+            {
+                'id': 1,
+                'account_id': 1,
+                'type': 'income',
+                'amount': 100.0,
+                'description': 'Test transection',
+                'balance_before': 0.0,
+                'balance_after': 100.0,
+                'created_at': time,
+            }
+        ]
+    }
