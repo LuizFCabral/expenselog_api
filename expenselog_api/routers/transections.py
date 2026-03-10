@@ -1,8 +1,7 @@
 from http import HTTPStatus
-from http.client import HTTPException
 from typing import Annotated
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 

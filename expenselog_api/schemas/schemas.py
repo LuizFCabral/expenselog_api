@@ -59,4 +59,4 @@ class TransectionPublic(TransectionSchema):
 
 
 class TransectionList(BaseModel):
-    transections: list[TransectionSchema]
+    transections: list[TransectionPublic]

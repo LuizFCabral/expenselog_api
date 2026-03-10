@@ -3,6 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, HTTPException
 from fastapi.params import Depends
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from expenselog_api.database import get_session
@@ -82,7 +83,7 @@ async def list_transections(
     session: Session,
 ):
     transections = await session.scalars(
-        Transection.select()
+        select(Transection)
         .where(Account.id == account.id)
         .order_by(Account.created_at.desc())
     )
