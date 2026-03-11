@@ -26,18 +26,24 @@ async def add_transection(
             detail='Amount must be greater than zero',
         )
 
+    balance_after = account.balance
+    balance_before = account.balance
+
+    if transection.type == 'income':
+        balance_after += transection.amount
+        account.increase_balance(transection.amount)
+    elif transection.type == 'expense':
+        balance_after -= transection.amount
+        account.decrease_balance(transection.amount)
+
     db_transection = Transection(
         account_id=account.id,
         type=transection.type,
         amount=transection.amount,
         description=transection.description,
-        balance_before=account.balance,
-        balance_after=account.balance + transection.amount,
+        balance_before=balance_before,
+        balance_after=balance_after,
     )
-    if transection.type == 'income':
-        account.increase_balance(transection.amount)
-    elif transection.type == 'expense':
-        account.decrease_balance(transection.amount)
 
     session.add(db_transection)
     session.add(account)

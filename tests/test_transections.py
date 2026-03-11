@@ -32,7 +32,9 @@ def test_add_transection_income(client, token, mock_db_time, account):
     assert response.json() == {
         'id': 1,
         'account_id': 1,
-        'amount': 150,
+        'amount': 150.0,
+        'balance_before': 0.0,
+        'balance_after': 150.0,
         'description': 'Test transection',
         'type': 'income',
         'created_at': time.isoformat(),
@@ -55,7 +57,9 @@ def test_add_transection_expense(client, token, mock_db_time, account):
     assert response.json() == {
         'id': 1,
         'account_id': 1,
-        'amount': 150,
+        'amount': 150.0,
+        'balance_before': 0.0,
+        'balance_after': -150.0,
         'description': 'Test transection',
         'type': 'expense',
         'created_at': time.isoformat(),

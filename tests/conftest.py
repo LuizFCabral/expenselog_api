@@ -113,6 +113,8 @@ async def transection(account, session: AsyncSession):
     await session.commit()
     await session.refresh(transection)
 
+    transection.created_at = '2026-03-11T16:57:40.618458'
+
     return transection
 
 
