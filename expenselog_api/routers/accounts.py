@@ -1,20 +1,25 @@
 from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.params import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from expenselog_api.database import get_session
 from expenselog_api.models import Account, Transection, User
-from expenselog_api.schemas.schemas import AccountSchema, TransectionList
+from expenselog_api.schemas.schemas import (
+    AccountSchema,
+    FilterPage,
+    TransectionList,
+)
 from expenselog_api.security import get_current_account, get_current_user
 
 router = APIRouter(prefix='/accounts', tags=['accounts'])
 Session = Annotated[AsyncSession, Depends(get_session)]
 CurrentUser = Annotated[User, Depends(get_current_user)]
 CurrentAccount = Annotated[Account, Depends(get_current_account)]
+T_FilterPage = Annotated[FilterPage, Query()]
 
 
 async def create_account(user_id: int, session: Session):
@@ -81,11 +86,14 @@ async def decrease_balance(
 async def list_transections(
     account: CurrentAccount,
     session: Session,
+    filter: T_FilterPage,
 ):
     transections = await session.scalars(
         select(Transection)
         .where(Account.id == account.id)
         .order_by(Account.created_at.desc())
+        .limit(filter.limit)
+        .offset(filter.offset)
     )
 
     return {'transections': transections.all()}

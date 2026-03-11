@@ -7,11 +7,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from expenselog_api.database import get_session
 from expenselog_api.models import Account, Transection
-from expenselog_api.schemas.schemas import TransectionPublic, TransectionSchema
+from expenselog_api.schemas.schemas import (
+    TransectionPublic,
+    TransectionSchema,
+)
 from expenselog_api.security import get_current_account
 
 Session = Annotated[AsyncSession, Depends(get_session)]
 CurrentAccount = Annotated[Account, Depends(get_current_account)]
+
 
 router = APIRouter(prefix='/transections', tags=['transections'])
 
